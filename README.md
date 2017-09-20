@@ -8,8 +8,8 @@ tars Java Codegen Plugin for Protobuf
 **插件编译需要依赖Protobuf**
 
 ```shell
-export PROTOBUF_HOME="protobuf安装目录"
-export CXXFLAGS="-I$PROTOBUF_HOME/src" LDFLAGS="-L$PROTOBUF_HOME/src/.libs"
+export PROTOBUF_HOME='protobuf安装目录'
+export CXXFLAGS='-I$PROTOBUF_HOME/src" LDFLAGS="-L$PROTOBUF_HOME/src/.libs'
 ```
 
 ## System requirement
@@ -19,13 +19,15 @@ export CXXFLAGS="-I$PROTOBUF_HOME/src" LDFLAGS="-L$PROTOBUF_HOME/src/.libs"
 * [Protobuf](https://github.com/google/protobuf) 3.0.0-beta-3 or up
 
 ## Compiling and testing the codegen
-protobuf的编译[参见](https://github.com/google/protobuf);
+[protobuf](https://github.com/google/protobuf)的编译
 
+```shell
+git clone https://github.com/google/protobuf.git
+./autogen.sh
+./configure
+make
+export PROTOBUF_HOME=`pwd`
 ```
-
-```
-
-
 
 插件的编译
 
@@ -38,7 +40,7 @@ export CXXFLAGS="-I$PROTOBUF_HOME/src" LDFLAGS="-L$PROTOBUF_HOME/src/.libs"
 
 ## Useage
 
-mac
+Mac
 
 ```shell
 export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$PROTOBUF_HOME/src/.libs
@@ -46,9 +48,19 @@ cd test
 $PROTOBUF_HOME/src/.libs/protoc --plugin=protoc-gen-tars-java=../build/exe/java_plugin/protoc-gen-tars-java --tars-java_out=./ --java_out=./ Flight.proto
 ```
 
-linux
+查看生成结果:
+
+```
+➜  test git:(master) ll com/iflytek/grpc/flight/
+total 92K
+-rw-r--r-- 1 scguo staff  79K  9 20 19:28 Flight.java
+-rw-r--r-- 1 scguo staff  749  9 20 19:28 FlightServicePrx.java
+-rw-r--r-- 1 scguo staff  490  9 20 19:28 FlightServiceServant.java
+-rw-r--r-- 1 scguo staff 1.8K  9 20 19:28 ProtoCodec.java
+```
+
+Linux
 
 ```
 
 ```
-
