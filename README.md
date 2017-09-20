@@ -1,38 +1,54 @@
-tars Java Codegen Plugin for Protobuf Compiler
+tars Java Codegen Plugin for Protobuf
 ==============================================
 
-This generates the Java interfaces out of the service definition from a
-`.proto` file. It works with the Protobuf Compiler (``protoc``).
+插件可以和`protoc`一起生成`.proto`文件定义的接口；
 
-Normally you don't need to compile the codegen by yourself, since pre-compiled
-binaries for common platforms are available on Maven Central. However, if the
-pre-compiled binaries are not compatible with your system, you may want to
-build your own codegen.
+需要自己编译；
+
+**插件编译需要依赖Protobuf**
+
+```shell
+export PROTOBUF_HOME="protobuf安装目录"
+export CXXFLAGS="-I$PROTOBUF_HOME/src" LDFLAGS="-L$PROTOBUF_HOME/src/.libs"
+```
 
 ## System requirement
 
-* Linux, Mac OS X with Clang, or Windows with MSYS2
+* Linux、 Mac OS X with Clang、 Windows with MSYS2
 * Java 7 or up
 * [Protobuf](https://github.com/google/protobuf) 3.0.0-beta-3 or up
 
 ## Compiling and testing the codegen
-### client
+protobuf的编译[参见](https://github.com/google/protobuf);
 
 ```
-cd client
-./gradlew java_pluginExecutable
-```
-
-### server
 
 ```
-cd server
+
+
+
+插件的编译
+
+```shell
+git clone git@github.com:scguoi/pb-tars-service-generate-plugin.git
+cd pb-tars-service-generate-plugin
+export CXXFLAGS="-I$PROTOBUF_HOME/src" LDFLAGS="-L$PROTOBUF_HOME/src/.libs"
 ./gradlew java_pluginExecutable
 ```
 
 ## Useage
 
+mac
+
+```shell
+export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$PROTOBUF_HOME/src/.libs
+cd test
+$PROTOBUF_HOME/src/.libs/protoc --plugin=protoc-gen-tars-java=../build/exe/java_plugin/protoc-gen-tars-java --tars-java_out=./ --java_out=./ Flight.proto
 ```
-protobuf/src/.libs/protoc --plugin=protoc-gen-tars-java=compiler/server/build/exe/java_plugin/protoc-gen-tars-java --plugin=protoc-gen-tars-client-java=compiler/client/build/exe/java_plugin/protoc-gen-tars-client-java --tars-client-java_out=./gcode/ --tars-java_out=./gcode/ --java_out=./gcode/ Flight.proto
+
+linux
+
+```
+
 ```
 
