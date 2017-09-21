@@ -14,7 +14,7 @@ export CXXFLAGS='-I$PROTOBUF_HOME/src" LDFLAGS="-L$PROTOBUF_HOME/src/.libs'
 
 ## System requirement
 
-* Linux、 Mac OS X with Clang、 Windows with MSYS2
+* Linux、 Mac OS X with Clang
 * Java 7 or up
 * [Protobuf](https://github.com/google/protobuf) 3.0.0-beta-3 or up
 
@@ -40,7 +40,7 @@ export CXXFLAGS="-I$PROTOBUF_HOME/src" LDFLAGS="-L$PROTOBUF_HOME/src/.libs"
 
 ## Useage
 
-Mac
+### Mac
 
 ```shell
 export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$PROTOBUF_HOME/src/.libs
@@ -59,8 +59,36 @@ total 92K
 -rw-r--r-- 1 scguo staff 1.8K  9 20 19:28 ProtoCodec.java
 ```
 
-Linux
+### Linux
 
+```shell
+export LD_LIBRARY_PATH="$PROTOBUF_HOME/src/.libs"
+cd test
+$PROTOBUF_HOME/src/.libs/protoc --plugin=protoc-gen-tars-java=../build/exe/java_plugin/protoc-gen-tars-java --tars-java_out=./ --java_out=./ Flight.proto
 ```
 
+产看生成的结果:
+
+```shell
+H0045170 : ➜  test  l com/iflytek/grpc/flight/
+总用量 92K
+drwxr-xr-x 2 root root  106 9月  21 08:27 .
+drwxr-xr-x 3 root root   19 9月  21 08:27 ..
+-rw-r--r-- 1 root root  80K 9月  21 08:27 Flight.java
+-rw-r--r-- 1 root root  749 9月  21 08:27 FlightServicePrx.java
+-rw-r--r-- 1 root root  490 9月  21 08:27 FlightServiceServant.java
+-rw-r--r-- 1 root root 1.8K 9月  21 08:27 ProtoCodec.java
+```
+
+## 可能的问题
+
+1、编译找不到-lstdc++
+
+```shell
+/bin/ld: cannot find -lstdc++
+collect2: 错误：ld 返回 1
+```
+
+```shell
+yum install libstdc++-static.x86_64
 ```
