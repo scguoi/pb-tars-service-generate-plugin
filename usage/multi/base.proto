@@ -1,5 +1,5 @@
 option java_generic_services = true;
-option java_package = "com.iflytek.grpc.flight.dto"
+option java_package = "com.iflytek.grpc.flight.dto";
 
 message QueryFlightRequest{
   required string name=1;

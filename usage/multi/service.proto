@@ -1,7 +1,7 @@
-import base.proto
+import "base.proto";
 
 option java_generic_services = true;
-option java_package = "com.iflytek.grpc.flight.service"
+option java_package = "com.iflytek.grpc.flight.service";
 
 service FlightService{
   rpc queryFlight(QueryFlightRequest) returns (QueryFlightResponse);
