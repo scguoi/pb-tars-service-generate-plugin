@@ -38,33 +38,34 @@ export CXXFLAGS="-I$PROTOBUF_HOME/src" LDFLAGS="-L$PROTOBUF_HOME/src/.libs"
 ./gradlew java_pluginExecutable
 ```
 
-## Useage
+## Usage-单文件
 
 ### Mac
 
 ```shell
 export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$PROTOBUF_HOME/src/.libs
-cd test
-$PROTOBUF_HOME/src/.libs/protoc --plugin=protoc-gen-tars-java=../build/exe/java_plugin/protoc-gen-tars-java --tars-java_out=./ --java_out=./ Flight.proto
+cd usage/single
+$PROTOBUF_HOME/src/.libs/protoc --plugin=protoc-gen-tars-java=../../build/exe/java_plugin/protoc-gen-tars-java --tars-java_out=./ --java_out=./ flight.proto
 ```
 
 查看生成结果:
 
-```
-➜  test git:(master) ll com/iflytek/grpc/flight/
-total 92K
--rw-r--r-- 1 scguo staff  79K  9 20 19:28 Flight.java
--rw-r--r-- 1 scguo staff  749  9 20 19:28 FlightServicePrx.java
--rw-r--r-- 1 scguo staff  490  9 20 19:28 FlightServiceServant.java
--rw-r--r-- 1 scguo staff 1.8K  9 20 19:28 ProtoCodec.java
+```shell
+➜  single git:(master) ✗ ll com/iflytek/grpc/flight 
+total 96K
+-rw-r--r-- 1 scguo staff  79K Oct 10 14:30 Flight.java
+-rw-r--r-- 1 scguo staff  749 Oct 10 14:30 FlightServicePrx.java
+-rw-r--r-- 1 scguo staff  397 Oct 10 14:30 FlightServicePrxCallback.java
+-rw-r--r-- 1 scguo staff  490 Oct 10 14:30 FlightServiceServant.java
+-rw-r--r-- 1 scguo staff 1.8K Oct 10 14:30 ProtoCodec.java
 ```
 
 ### Linux
 
 ```shell
 export LD_LIBRARY_PATH="$PROTOBUF_HOME/src/.libs"
-cd test
-$PROTOBUF_HOME/src/.libs/protoc --plugin=protoc-gen-tars-java=../build/exe/java_plugin/protoc-gen-tars-java --tars-java_out=./ --java_out=./ Flight.proto
+cd 
+$PROTOBUF_HOME/src/.libs/protoc --plugin=protoc-gen-tars-java=../build/exe/java_plugin/protoc-gen-tars-java --tars-java_out=./ --java_out=./ flight.proto
 ```
 
 产看生成的结果:
