@@ -38,9 +38,11 @@ export CXXFLAGS="-I$PROTOBUF_HOME/src" LDFLAGS="-L$PROTOBUF_HOME/src/.libs"
 ./gradlew java_pluginExecutable
 ```
 
-## Usage-单文件
+## Usage
 
 ### Mac
+
+####单文件
 
 ```shell
 export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$PROTOBUF_HOME/src/.libs
@@ -60,25 +62,72 @@ total 96K
 -rw-r--r-- 1 scguo staff 1.8K Oct 10 14:30 ProtoCodec.java
 ```
 
+#### 多文件
+
+```shell
+export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$PROTOBUF_HOME/src/.libs
+cd usage/multi
+$PROTOBUF_HOME/src/.libs/protoc --java_out=./ base.proto
+$PROTOBUF_HOME/src/.libs/protoc --plugin=protoc-gen-tars-java=../../build/exe/java_plugin/protoc-gen-tars-java --tars-java_out=./ --java_out=./ service.proto 
+```
+
+查看生成结果:
+
+```shell
+➜  multi git:(master) ✗ ll com/iflytek/grpc/flight/dto 
+total 68K
+-rw-r--r-- 1 scguo staff 66K Oct 10 14:42 Base.java
+➜  multi git:(master) ✗ ll com/iflytek/grpc/flight/service 
+total 32K
+-rw-r--r-- 1 scguo staff  769 Oct 10 14:43 FlightServicePrx.java
+-rw-r--r-- 1 scguo staff  409 Oct 10 14:43 FlightServicePrxCallback.java
+-rw-r--r-- 1 scguo staff  506 Oct 10 14:43 FlightServiceServant.java
+-rw-r--r-- 1 scguo staff 1.8K Oct 10 14:43 ProtoCodec.java
+```
+
 ### Linux
+
+####单文件
 
 ```shell
 export LD_LIBRARY_PATH="$PROTOBUF_HOME/src/.libs"
-cd 
-$PROTOBUF_HOME/src/.libs/protoc --plugin=protoc-gen-tars-java=../build/exe/java_plugin/protoc-gen-tars-java --tars-java_out=./ --java_out=./ flight.proto
+cd usage/single
+$PROTOBUF_HOME/src/.libs/protoc --plugin=protoc-gen-tars-java=../../build/exe/java_plugin/protoc-gen-tars-java --tars-java_out=./ flight.proto
 ```
 
 产看生成的结果:
 
 ```shell
-H0045170 : ➜  test  l com/iflytek/grpc/flight/
-总用量 92K
-drwxr-xr-x 2 root root  106 9月  21 08:27 .
-drwxr-xr-x 3 root root   19 9月  21 08:27 ..
--rw-r--r-- 1 root root  80K 9月  21 08:27 Flight.java
--rw-r--r-- 1 root root  749 9月  21 08:27 FlightServicePrx.java
--rw-r--r-- 1 root root  490 9月  21 08:27 FlightServiceServant.java
--rw-r--r-- 1 root root 1.8K 9月  21 08:27 ProtoCodec.java
+H0045170 : ➜  single  ll com/iflytek/grpc/flight/
+总用量 96
+-rw-r--r-- 1 root root 81040 10月 10 14:47 Flight.java
+-rw-r--r-- 1 root root   397 10月 10 14:47 FlightServicePrxCallback.java
+-rw-r--r-- 1 root root   749 10月 10 14:47 FlightServicePrx.java
+-rw-r--r-- 1 root root   490 10月 10 14:47 FlightServiceServant.java
+-rw-r--r-- 1 root root  1820 10月 10 14:47 ProtoCodec.java
+```
+
+#### 多文件
+
+```shell
+export LD_LIBRARY_PATH="$PROTOBUF_HOME/src/.libs"
+cd usage/multi
+$PROTOBUF_HOME/src/.libs/protoc --java_out=./ base.proto
+$PROTOBUF_HOME/src/.libs/protoc --plugin=protoc-gen-tars-java=../../build/exe/java_plugin/protoc-gen-tars-java --tars-java_out=./ service.proto
+```
+
+查看生成结果:
+
+```shell
+H0045170 : ➜  multi  ll com/iflytek/grpc/flight/dto
+总用量 68
+-rw-r--r-- 1 root root 67409 10月 10 14:48 Base.java
+H0045170 : ➜  multi  ll com/iflytek/grpc/flight/service
+总用量 32
+-rw-r--r-- 1 root root   409 10月 10 14:49 FlightServicePrxCallback.java
+-rw-r--r-- 1 root root   769 10月 10 14:49 FlightServicePrx.java
+-rw-r--r-- 1 root root   506 10月 10 14:49 FlightServiceServant.java
+-rw-r--r-- 1 root root  1828 10月 10 14:49 ProtoCodec.java
 ```
 
 ## 可能的问题
