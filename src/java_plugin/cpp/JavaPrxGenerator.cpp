@@ -280,6 +280,7 @@ namespace JavaTarsPrxGenerator
     void PrintImports(Printer *p, bool generateNano)
     {
         p->Print("import com.qq.tars.protocol.tars.annotation.TarsCallback;\n"
+                         "import com.qq.tars.rpc.protocol.proto.ProtoCodec;\n"
                          "import com.qq.tars.protocol.annotation.ServantCodec;\n\n");
         if (generateNano)
         {

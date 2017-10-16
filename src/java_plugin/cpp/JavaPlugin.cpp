@@ -8,7 +8,6 @@
 #include "JavaServantGenerator.h"
 #include "JavaPrxGenerator.h"
 #include "JavaPrxCallbackGenerator.h"
-#include "JavaCodecGenerator.h"
 #include <google/protobuf/compiler/code_generator.h>
 #include <google/protobuf/compiler/plugin.h>
 #include <google/protobuf/descriptor.h>
@@ -67,7 +66,6 @@ public:
         JavaTarsServantGenerator::ProtoFlavor flavor = JavaTarsServantGenerator::ProtoFlavor::NORMAL;
         JavaTarsPrxGenerator::ProtoFlavor flavorPrx = JavaTarsPrxGenerator::ProtoFlavor::NORMAL;
         JavaTarsPrxCbGenerator::ProtoFlavor flavorPrxCB = JavaTarsPrxCbGenerator::ProtoFlavor::NORMAL;
-        JavaTarsCodecGenerator::ProtoFlavor flavorCodec = JavaTarsCodecGenerator::ProtoFlavor::NORMAL;
 
         bool enable_deprecated = false;
         for (size_t i = 0; i < options.size(); i++)
@@ -79,14 +77,12 @@ public:
                 flavor = JavaTarsServantGenerator::ProtoFlavor::NANO;
                 flavorPrx = JavaTarsPrxGenerator::ProtoFlavor::NANO;
                 flavorPrxCB = JavaTarsPrxCbGenerator::ProtoFlavor::NANO;
-                flavorCodec = JavaTarsCodecGenerator::ProtoFlavor::NANO;
             }
             else if (options[i].first == "lite")
             {
                 flavor = JavaTarsServantGenerator::ProtoFlavor::LITE;
                 flavorPrx = JavaTarsPrxGenerator::ProtoFlavor::LITE;
                 flavorPrxCB = JavaTarsPrxCbGenerator::ProtoFlavor::LITE;
-                flavorCodec = JavaTarsCodecGenerator::ProtoFlavor::LITE;
             }
             else if (options[i].first == "enable_deprecated")
             {
@@ -131,19 +127,6 @@ public:
                 string filename = package_filename + JavaTarsPrxCbGenerator::ServiceClassName(service) + ".java";
                 std::unique_ptr<google::protobuf::io::ZeroCopyOutputStream> output(context->Open(filename));
                 JavaTarsPrxCbGenerator::GenerateService(service, output.get(), flavorPrxCB, enable_deprecated);
-            }
-        }
-        // 编解码类的生成
-        {
-            string package_name = JavaTarsCodecGenerator::ServiceJavaPackage(
-                    file, flavorPrx == JavaTarsCodecGenerator::ProtoFlavor::NANO);
-            string package_filename = JavaPackageToDir(package_name);
-            for (int i = 0; i < file->service_count(); ++i)
-            {
-                const google::protobuf::ServiceDescriptor *service = file->service(i);
-                string filename = package_filename + JavaTarsCodecGenerator::ServiceClassName(service) + ".java";
-                std::unique_ptr<google::protobuf::io::ZeroCopyOutputStream> output(context->Open(filename));
-                JavaTarsCodecGenerator::GenerateService(service, output.get(), flavorCodec, enable_deprecated);
             }
         }
         return true;
