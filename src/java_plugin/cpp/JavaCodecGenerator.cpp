@@ -1,4 +1,4 @@
-#include "java_codec_generator.h"
+#include "JavaCodecGenerator.h"
 
 #include <algorithm>
 #include <iostream>
@@ -23,7 +23,8 @@
 #define FALLTHROUGH_INTENDED
 #endif
 
-namespace java_tars_codec_generator {
+namespace JavaTarsCodecGenerator
+{
 
     using google::protobuf::FileDescriptor;
     using google::protobuf::ServiceDescriptor;
@@ -33,17 +34,24 @@ namespace java_tars_codec_generator {
     using google::protobuf::SourceLocation;
     using std::to_string;
 
-// Adjust a method name prefix identifier to follow the JavaBean spec:
-//   - decapitalize the first letter
-//   - remove embedded underscores & capitalize the following letter
-    static string MixedLower(const string &word) {
+    /**
+     * Adjust a method name prefix identifier to follow the JavaBean spec:
+     * decapitalize the first letter
+     * remove embedded underscores & capitalize the following letter
+     */
+    static string MixedLower(const string &word)
+    {
         string w;
         w += tolower(word[0]);
         bool after_underscore = false;
-        for (size_t i = 1; i < word.length(); ++i) {
-            if (word[i] == '_') {
+        for (size_t i = 1; i < word.length(); ++i)
+        {
+            if (word[i] == '_')
+            {
                 after_underscore = true;
-            } else {
+            }
+            else
+            {
                 w += after_underscore ? toupper(word[i]) : word[i];
                 after_underscore = false;
             }
@@ -51,43 +59,55 @@ namespace java_tars_codec_generator {
         return w;
     }
 
-// Converts to the identifier to the ALL_UPPER_CASE format.
-//   - An underscore is inserted where a lower case letter is followed by an
-//     upper case letter.
-//   - All letters are converted to upper case
-    static string ToAllUpperCase(const string &word) {
+    /**
+     * Converts to the identifier to the ALL_UPPER_CASE format.
+     * An underscore is inserted where a lower case letter is followed by an
+     * upper case letter.
+     * All letters are converted to upper case
+     */
+    static string ToAllUpperCase(const string &word)
+    {
         string w;
-        for (size_t i = 0; i < word.length(); ++i) {
+        for (size_t i = 0; i < word.length(); ++i)
+        {
             w += toupper(word[i]);
-            if ((i < word.length() - 1) && islower(word[i]) && isupper(word[i + 1])) {
+            if ((i < word.length() - 1) && islower(word[i]) && isupper(word[i + 1]))
+            {
                 w += '_';
             }
         }
         return w;
     }
 
-    static inline string LowerMethodName(const MethodDescriptor *method) {
+    static inline string LowerMethodName(const MethodDescriptor *method)
+    {
         return MixedLower(method->name());
     }
 
-    static inline string MethodPropertiesFieldName(const MethodDescriptor *method) {
+    static inline string MethodPropertiesFieldName(const MethodDescriptor *method)
+    {
         return "METHOD_" + ToAllUpperCase(method->name());
     }
 
-    static inline string MethodIdFieldName(const MethodDescriptor *method) {
+    static inline string MethodIdFieldName(const MethodDescriptor *method)
+    {
         return "METHODID_" + ToAllUpperCase(method->name());
     }
 
-    static inline string MessageFullJavaName(bool nano, const Descriptor *desc) {
+    static inline string MessageFullJavaName(bool nano, const Descriptor *desc)
+    {
         string name = google::protobuf::compiler::java::ClassName(desc);
-        if (nano) {
-            // XXX: Add "nano" to the original package
-            if (isupper(name[0])) {
+        if (nano)
+        {
+            if (isupper(name[0]))
+            {
                 // No java package specified.
                 return "nano." + name;
             }
-            for (size_t i = 0; i < name.size(); ++i) {
-                if ((name[i] == '.') && (i < (name.size() - 1)) && isupper(name[i + 1])) {
+            for (size_t i = 0; i < name.size(); ++i)
+            {
+                if ((name[i] == '.') && (i < (name.size() - 1)) && isupper(name[i + 1]))
+                {
                     return name.substr(0, i + 1) + "nano." + name.substr(i + 1);
                 }
             }
@@ -96,7 +116,8 @@ namespace java_tars_codec_generator {
     }
 
     static void TarsWriteFileDocComment(Printer *printer,
-                                        const ServiceDescriptor *service) {
+                                        const ServiceDescriptor *service)
+    {
         printer->Print("/**\n");
         printer->Print(" * Tencent is pleased to support the open source community by making Tars available.\n"
                                " * Copyright (C) 2016 THL A29 Limited, a Tencent company. All rights reserved.\n"
@@ -111,33 +132,18 @@ namespace java_tars_codec_generator {
     }
 
     static void TarsWriteServiceDocComment(Printer *printer,
-                                           const ServiceDescriptor *service) {
+                                           const ServiceDescriptor *service)
+    {
         printer->Print("/**\n");
         printer->Print(" */\n");
     }
-
-    enum StubType {
-        ASYNC_INTERFACE = 0,
-        BLOCKING_CLIENT_INTERFACE = 1,
-        FUTURE_CLIENT_INTERFACE = 2,
-        BLOCKING_SERVER_INTERFACE = 3,
-        ASYNC_CLIENT_IMPL = 4,
-        BLOCKING_CLIENT_IMPL = 5,
-        FUTURE_CLIENT_IMPL = 6,
-        ABSTRACT_CLASS = 7,
-    };
-
-    enum CallType {
-        ASYNC_CALL = 0,
-        BLOCKING_CALL = 1,
-        FUTURE_CALL = 2
-    };
 
     static void PrintService(const ServiceDescriptor *service,
                              std::map<string, string> *vars,
                              Printer *p,
                              ProtoFlavor flavor,
-                             bool enable_deprecated) {
+                             bool enable_deprecated)
+    {
         (*vars)["service_name"] = service->name();
         (*vars)["file_name"] = service->file()->name();
         (*vars)["service_class_name"] = ServiceClassName(service);
@@ -177,7 +183,8 @@ namespace java_tars_codec_generator {
         p->Print("}\n");
     }
 
-    void PrintImports(Printer *p, bool generate_nano) {
+    void PrintImports(Printer *p, bool generate_nano)
+    {
         p->Print("import com.google.protobuf.ByteString;\n"
                          "import com.google.protobuf.GeneratedMessage;\n"
                          "import com.qq.tars.common.util.Constants;\n"
@@ -187,7 +194,8 @@ namespace java_tars_codec_generator {
                          "import com.qq.tars.protocol.tars.support.TarsMethodParameterInfo;\n"
                          "import com.qq.tars.protocol.util.TarsHelper;\n"
                          "import com.qq.tars.rpc.protocol.tars.TarsCodec;\n\n");
-        if (generate_nano) {
+        if (generate_nano)
+        {
             p->Print("import java.io.IOException;\n\n");
         }
     }
@@ -195,7 +203,8 @@ namespace java_tars_codec_generator {
     void GenerateService(const ServiceDescriptor *service,
                          google::protobuf::io::ZeroCopyOutputStream *out,
                          ProtoFlavor flavor,
-                         bool enable_deprecated) {
+                         bool enable_deprecated)
+    {
         // All non-generated classes must be referred by fully qualified names to
         // avoid collision with generated classes.
         std::map<string, string> vars;
@@ -206,7 +215,8 @@ namespace java_tars_codec_generator {
         string package_name = ServiceJavaPackage(service->file(),
                                                  flavor == ProtoFlavor::NANO);
         TarsWriteFileDocComment(&printer, service);
-        if (!package_name.empty()) {
+        if (!package_name.empty())
+        {
             printer.Print(
                     "package $package_name$;\n\n",
                     "package_name", package_name);
@@ -215,22 +225,29 @@ namespace java_tars_codec_generator {
 
         // Package string is used to fully qualify method names.
         vars["Package"] = service->file()->package();
-        if (!vars["Package"].empty()) {
+        if (!vars["Package"].empty())
+        {
             vars["Package"].append(".");
         }
         PrintService(service, &vars, &printer, flavor, enable_deprecated);
     }
 
-    string ServiceJavaPackage(const FileDescriptor *file, bool nano) {
+    string ServiceJavaPackage(const FileDescriptor *file, bool nano)
+    {
         string result = google::protobuf::compiler::java::ClassName(file);
         size_t last_dot_pos = result.find_last_of('.');
-        if (last_dot_pos != string::npos) {
+        if (last_dot_pos != string::npos)
+        {
             result.resize(last_dot_pos);
-        } else {
+        }
+        else
+        {
             result = "";
         }
-        if (nano) {
-            if (!result.empty()) {
+        if (nano)
+        {
+            if (!result.empty())
+            {
                 result += ".";
             }
             result += "nano";
@@ -238,8 +255,9 @@ namespace java_tars_codec_generator {
         return result;
     }
 
-    string ServiceClassName(const google::protobuf::ServiceDescriptor *service) {
+    string ServiceClassName(const google::protobuf::ServiceDescriptor *service)
+    {
         return "ProtoCodec";
     }
 
-}  // namespace java_tars_prx_generator
+}  // namespace JavaTarsCodecGenerator
